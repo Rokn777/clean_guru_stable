@@ -1,12 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'core/theme/colors.dart';
 import 'core/theme/typography.dart';
 import 'features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'features/cleaner/presentation/screens/cleaner_screen.dart';
 import 'features/settings/presentation/screens/settings_screen.dart';
+import 'providers/device_provider.dart';
+import 'providers/cleaning_provider.dart';
+import 'providers/settings_provider.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  final settingsProvider = SettingsProvider();
+  await settingsProvider.initializeSettings();
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => DeviceProvider()),
+        ChangeNotifierProvider(create: (_) => CleaningProvider()),
+        ChangeNotifierProvider.value(value: settingsProvider),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -14,11 +32,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.watch<SettingsProvider>().isDarkMode;
+
     return MaterialApp(
       title: 'Clean Guru',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: AppColors.lightColorScheme,
+        colorScheme: isDarkMode ? AppColors.darkColorScheme : AppColors.lightColorScheme,
         useMaterial3: true,
         textTheme: TextTheme(
           displayLarge: AppTypography.displayLarge,
