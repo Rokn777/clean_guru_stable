@@ -5,79 +5,60 @@ class PermissionManager extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+    return Column(
+      children: [
+        _buildPermissionTile(
+          icon: Icons.folder,
+          title: 'Storage Access',
+          subtitle: 'Required for cleaning files',
+          isGranted: true,
+          onTap: () {/* Handle storage permission */},
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPermissionTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required bool isGranted,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(vertical: 8),
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.blue.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(
+          icon,
+          color: Colors.blue,
+          size: 24,
+        ),
       ),
-      child: Column(
-        children: [
-          ListTile(
-            title: const Text(
-              'Storage Access',
-              style: TextStyle(fontSize: 16),
-            ),
-            subtitle: const Text(
-              'Required for cleaning files',
-              style: TextStyle(fontSize: 12),
-            ),
-            leading: Icon(
-              Icons.folder_outlined,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            trailing: Icon(
-              Icons.check_circle,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            onTap: () {
-              // TODO: Implement permission request
-            },
-          ),
-          const Divider(height: 1),
-          ListTile(
-            title: const Text(
-              'Usage Access',
-              style: TextStyle(fontSize: 16),
-            ),
-            subtitle: const Text(
-              'Required for app usage statistics',
-              style: TextStyle(fontSize: 12),
-            ),
-            leading: Icon(
-              Icons.analytics_outlined,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            trailing: OutlinedButton(
-              onPressed: () {
-                // TODO: Implement permission request
-              },
-              child: const Text('Grant'),
-            ),
-          ),
-          const Divider(height: 1),
-          ListTile(
-            title: const Text(
-              'Notifications',
-              style: TextStyle(fontSize: 16),
-            ),
-            subtitle: const Text(
-              'Required for cleanup reminders',
-              style: TextStyle(fontSize: 12),
-            ),
-            leading: Icon(
-              Icons.notifications_outlined,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            trailing: Icon(
-              Icons.check_circle,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            onTap: () {
-              // TODO: Implement permission request
-            },
-          ),
-        ],
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 16,
+        ),
       ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(
+          color: Colors.grey[600],
+          fontSize: 14,
+        ),
+      ),
+      trailing: Icon(
+        isGranted ? Icons.check_circle : Icons.arrow_forward_ios,
+        color: isGranted ? Colors.green : Colors.grey,
+        size: isGranted ? 24 : 16,
+      ),
+      onTap: onTap,
     );
   }
 }

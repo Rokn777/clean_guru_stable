@@ -1,98 +1,144 @@
- import 'package:flutter/material.dart';
-import '../../../../core/theme/spacing.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../../providers/cleaning_provider.dart';
+import '../../../../providers/device_provider.dart';
 
 class QuickActions extends StatelessWidget {
   const QuickActions({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Quick Actions',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.md),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          mainAxisSpacing: AppSpacing.sm,
-          crossAxisSpacing: AppSpacing.sm,
-          childAspectRatio: 1.5,
+    return Card(
+      margin: const EdgeInsets.all(16),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildActionCard(
-              context,
-              'Clean Storage',
-              Icons.storage_outlined,
-              onTap: () {},
+            const Text(
+              'Quick Actions',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            _buildActionCard(
-              context,
-              'Boost RAM',
-              Icons.memory_outlined,
-              onTap: () {},
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _QuickActionButton(
+                  icon: Icons.cleaning_services,
+                  label: 'Clean Storage',
+                  color: Colors.blue,
+                  onTap: () => _cleanStorage(context),
+                ),
+                _QuickActionButton(
+                  icon: Icons.memory,
+                  label: 'Boost RAM',
+                  color: Colors.green,
+                  onTap: () => _boostRam(context),
+                ),
+              ],
             ),
-            _buildActionCard(
-              context,
-              'Clear Cache',
-              Icons.delete_sweep_outlined,
-              onTap: () {},
-            ),
-            _buildActionCard(
-              context,
-              'App Manager',
-              Icons.apps_outlined,
-              onTap: () {},
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _QuickActionButton(
+                  icon: Icons.cached,
+                  label: 'Clear Cache',
+                  color: Colors.orange,
+                  onTap: () => _clearCache(context),
+                ),
+                _QuickActionButton(
+                  icon: Icons.apps,
+                  label: 'App Manager',
+                  color: Colors.purple,
+                  onTap: () => _openAppManager(context),
+                ),
+              ],
             ),
           ],
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildActionCard(
-    BuildContext context,
-    String title,
-    IconData icon, {
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      elevation: 1,
-      child: InkWell(
-        onTap: onTap,
+  void _cleanStorage(BuildContext context) {
+    final cleaningProvider = context.read<CleaningProvider>();
+    cleaningProvider.toggleItemSelection('Junk Files', true);
+    cleaningProvider.toggleItemSelection('Cache Files', true);
+    cleaningProvider.cleanSelected();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Cleaning storage...')),
+    );
+  }
+
+  void _boostRam(BuildContext context) {
+    context.read<DeviceProvider>().optimizeRam();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('RAM optimization in progress...')),
+    );
+  }
+
+  void _clearCache(BuildContext context) {
+    final cleaningProvider = context.read<CleaningProvider>();
+    cleaningProvider.toggleItemSelection('Cache Files', true);
+    cleaningProvider.cleanSelected();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Clearing cache...')),
+    );
+  }
+
+  void _openAppManager(BuildContext context) {
+    // This will be implemented later
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('App Manager coming soon...')),
+    );
+  }
+}
+
+class _QuickActionButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _QuickActionButton({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: 140,
+        padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: Theme.of(context).colorScheme.primary,
-              size: 24,
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: color,
+                size: 28,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
-              title,
-              style: const TextStyle(
-                fontSize: 14,
+              label,
+              style: TextStyle(
+                color: color,
                 fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Container(
-              height: 2,
-              width: 40,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.red.shade200,
-                    Colors.yellow.shade200,
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(1),
               ),
             ),
           ],

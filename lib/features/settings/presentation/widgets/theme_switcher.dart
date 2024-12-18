@@ -1,68 +1,93 @@
 import 'package:flutter/material.dart';
 
-class ThemeSwitcher extends StatefulWidget {
-  const ThemeSwitcher({super.key});
+class ThemeSwitcher extends StatelessWidget {
+  final bool isDarkMode;
+  final bool useSystemTheme;
+  final ValueChanged<bool> onDarkModeChanged;
+  final ValueChanged<bool> onSystemThemeChanged;
 
-  @override
-  State<ThemeSwitcher> createState() => _ThemeSwitcherState();
-}
-
-class _ThemeSwitcherState extends State<ThemeSwitcher> {
-  bool _isDarkMode = false;
-  bool _isSystemMode = true;
+  const ThemeSwitcher({
+    super.key,
+    required this.isDarkMode,
+    required this.useSystemTheme,
+    required this.onDarkModeChanged,
+    required this.onSystemThemeChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          SwitchListTile(
-            title: const Text(
-              'Dark Mode',
-              style: TextStyle(fontSize: 16),
+    return Column(
+      children: [
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(vertical: 8),
+          leading: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.blue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
             ),
-            subtitle: Text(
-              _isDarkMode ? 'Dark theme enabled' : 'Light theme enabled',
-              style: const TextStyle(fontSize: 12),
+            child: const Icon(
+              Icons.dark_mode,
+              color: Colors.blue,
+              size: 24,
             ),
-            secondary: Icon(
-              _isDarkMode ? Icons.dark_mode : Icons.light_mode,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            value: _isDarkMode,
-            onChanged: _isSystemMode ? null : (bool value) {
-              setState(() {
-                _isDarkMode = value;
-              });
-            },
           ),
-          const Divider(height: 1),
-          SwitchListTile(
-            title: const Text(
-              'Use System Theme',
-              style: TextStyle(fontSize: 16),
+          title: const Text(
+            'Dark Mode',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
             ),
-            subtitle: const Text(
-              'Automatically switch based on system settings',
-              style: TextStyle(fontSize: 12),
-            ),
-            secondary: Icon(
-              Icons.settings_brightness,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            value: _isSystemMode,
-            onChanged: (bool value) {
-              setState(() {
-                _isSystemMode = value;
-              });
-            },
           ),
-        ],
-      ),
+          subtitle: Text(
+            isDarkMode ? 'Dark theme enabled' : 'Light theme enabled',
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 14,
+            ),
+          ),
+          trailing: Switch.adaptive(
+            value: isDarkMode,
+            onChanged: onDarkModeChanged,
+            activeColor: Colors.blue,
+          ),
+        ),
+        const Divider(height: 1),
+        ListTile(
+          contentPadding: const EdgeInsets.symmetric(vertical: 8),
+          leading: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.blue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(
+              Icons.brightness_auto,
+              color: Colors.blue,
+              size: 24,
+            ),
+          ),
+          title: const Text(
+            'Use System Theme',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
+            ),
+          ),
+          subtitle: const Text(
+            'Automatically switch based on system settings',
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 14,
+            ),
+          ),
+          trailing: Switch.adaptive(
+            value: useSystemTheme,
+            onChanged: onSystemThemeChanged,
+            activeColor: Colors.blue,
+          ),
+        ),
+      ],
     );
   }
 }

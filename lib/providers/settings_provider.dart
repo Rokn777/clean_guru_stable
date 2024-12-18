@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';  // Fixed import
 
 class SettingsProvider extends ChangeNotifier {
   SharedPreferences? _prefs;
@@ -7,6 +7,9 @@ class SettingsProvider extends ChangeNotifier {
   // Theme settings
   bool _isDarkMode = false;
   bool get isDarkMode => _isDarkMode;
+
+  bool _useSystemTheme = false;
+  bool get useSystemTheme => _useSystemTheme;
 
   // Language settings
   String _currentLanguage = 'English';
@@ -32,6 +35,7 @@ class SettingsProvider extends ChangeNotifier {
 
   void _loadSettings() {
     _isDarkMode = _prefs?.getBool('isDarkMode') ?? false;
+    _useSystemTheme = _prefs?.getBool('useSystemTheme') ?? false;
     _currentLanguage = _prefs?.getString('language') ?? 'English';
     _cleanupAlerts = _prefs?.getBool('cleanupAlerts') ?? true;
     _storageAlerts = _prefs?.getBool('storageAlerts') ?? true;
@@ -42,6 +46,12 @@ class SettingsProvider extends ChangeNotifier {
   Future<void> setDarkMode(bool value) async {
     _isDarkMode = value;
     await _prefs?.setBool('isDarkMode', value);
+    notifyListeners();
+  }
+
+  Future<void> setUseSystemTheme(bool value) async {
+    _useSystemTheme = value;
+    await _prefs?.setBool('useSystemTheme', value);
     notifyListeners();
   }
 

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/spacing.dart';
-import '../widgets/theme_switcher.dart';
+import 'package:provider/provider.dart';
+import '../../../../providers/settings_provider.dart';
 import '../widgets/language_selector.dart';
 import '../widgets/notification_settings.dart';
 import '../widgets/permission_manager.dart';
+import '../widgets/theme_switcher.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -11,83 +12,75 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
         title: const Text(
           'Settings',
           style: TextStyle(
+            color: Colors.black,
             fontSize: 20,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        children: [
-          // App Preferences Section
-          const Text(
-            'App Preferences',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          const ThemeSwitcher(),
-          const LanguageSelector(),
-          const SizedBox(height: AppSpacing.lg),
-
-          // Notifications Section
-          const Text(
-            'Notifications',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          const NotificationSettings(),
-          const SizedBox(height: AppSpacing.lg),
-
-          // Permissions Section
-          const Text(
-            'Permissions',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          const PermissionManager(),
-          const SizedBox(height: AppSpacing.lg),
-
-          // App Info Section
-          const Text(
-            'App Info',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Card(
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const ListTile(
-              leading: Icon(Icons.info_outline),
-              title: Text('Version'),
-              subtitle: Text('1.0.0'),
-            ),
-          ),
-        ],
+      body: Consumer<SettingsProvider>(
+        builder: (context, settings, child) {
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              const Text(
+                'App Preferences',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ThemeSwitcher(
+                isDarkMode: settings.isDarkMode,
+                useSystemTheme: settings.useSystemTheme,
+                onDarkModeChanged: settings.setDarkMode,
+                onSystemThemeChanged: settings.setUseSystemTheme,
+              ),
+              LanguageSelector(
+                currentLanguage: settings.currentLanguage,
+                onLanguageChanged: settings.setLanguage,
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Notifications',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 16),
+              NotificationSettings(
+                cleanupAlerts: settings.cleanupAlerts,
+                storageAlerts: settings.storageAlerts,
+                optimizationTips: settings.optimizationTips,
+                onCleanupAlertsChanged: settings.setCleanupAlerts,
+                onStorageAlertsChanged: settings.setStorageAlerts,
+                onOptimizationTipsChanged: settings.setOptimizationTips,
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Permissions',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const PermissionManager(),
+            ],
+          );
+        },
       ),
     );
   }

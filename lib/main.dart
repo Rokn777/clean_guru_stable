@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'core/theme/colors.dart';
-import 'core/theme/typography.dart';
-import 'features/dashboard/presentation/screens/dashboard_screen.dart';
-import 'features/cleaner/presentation/screens/cleaner_screen.dart';
-import 'features/settings/presentation/screens/settings_screen.dart';
-import 'providers/device_provider.dart';
-import 'providers/cleaning_provider.dart';
-import 'providers/settings_provider.dart';
+import 'package:clean_guru_stable/core/theme/colors.dart';
+import 'package:clean_guru_stable/core/theme/typography.dart';
+import 'package:clean_guru_stable/features/dashboard/presentation/screens/dashboard_screen.dart';
+import 'package:clean_guru_stable/features/cleaner/presentation/screens/cleaner_screen.dart';
+import 'package:clean_guru_stable/features/settings/presentation/screens/settings_screen.dart';
+import 'package:clean_guru_stable/providers/device_provider.dart';
+import 'package:clean_guru_stable/providers/cleaning_provider.dart';
+import 'package:clean_guru_stable/providers/settings_provider.dart';
 
 void main() async {
+  // Make sure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
   
+  // Initialize settings provider first
   final settingsProvider = SettingsProvider();
   await settingsProvider.initializeSettings();
 

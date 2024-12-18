@@ -1,68 +1,121 @@
 import 'package:flutter/material.dart';
 
-class LanguageSelector extends StatefulWidget {
-  const LanguageSelector({super.key});
+class LanguageSelector extends StatelessWidget {
+  final String currentLanguage;
+  final ValueChanged<String> onLanguageChanged;
 
-  @override
-  State<LanguageSelector> createState() => _LanguageSelectorState();
-}
-
-class _LanguageSelectorState extends State<LanguageSelector> {
-  String _selectedLanguage = 'English';
-
-  final List<Map<String, String>> _languages = const [
-    {'code': 'en', 'name': 'English', 'native': 'English'},
-    {'code': 'ar', 'name': 'Arabic', 'native': 'العربية'},
-  ];
+  const LanguageSelector({
+    super.key,
+    required this.currentLanguage,
+    required this.onLanguageChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ListTile(
-        title: const Text(
-          'Language',
-          style: TextStyle(fontSize: 16),
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(vertical: 8),
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.blue.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
         ),
-        subtitle: Text(
-          _selectedLanguage,
-          style: const TextStyle(fontSize: 12),
-        ),
-        leading: Icon(
+        child: const Icon(
           Icons.language,
-          color: Theme.of(context).colorScheme.primary,
+          color: Colors.blue,
+          size: 24,
         ),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: () {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Select Language'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: _languages.map((language) {
-                  return RadioListTile(
-                    title: Text(language['name']!),
-                    subtitle: Text(language['native']!),
-                    value: language['name']!,
-                    groupValue: _selectedLanguage,
-                    onChanged: (String? value) {
-                      if (value != null) {
-                        setState(() {
-                          _selectedLanguage = value;
-                        });
-                        Navigator.pop(context);
-                      }
-                    },
-                  );
-                }).toList(),
+      ),
+      title: const Text(
+        'Language',
+        style: TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 16,
+        ),
+      ),
+      subtitle: Text(
+        currentLanguage,
+        style: TextStyle(
+          color: Colors.grey[600],
+          fontSize: 14,
+        ),
+      ),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: () => _showLanguageDialog(context),
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                'Select Language',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          );
-        },
+            const SizedBox(height: 8),
+            _LanguageOption(
+              language: 'English',
+              isSelected: currentLanguage == 'English',
+              onTap: () {
+                onLanguageChanged('English');
+                Navigator.pop(context);
+              },
+            ),
+            _LanguageOption(
+              language: 'العربية',
+              isSelected: currentLanguage == 'العربية',
+              onTap: () {
+                onLanguageChanged('العربية');
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LanguageOption extends StatelessWidget {
+  final String language;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _LanguageOption({
+    required this.language,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: onTap,
+      leading: Icon(
+        isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+        color: isSelected ? Colors.blue : Colors.grey,
+      ),
+      title: Text(
+        language,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+        ),
       ),
     );
   }
